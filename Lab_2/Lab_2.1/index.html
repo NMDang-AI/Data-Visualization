@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="description" content="Data Visualisation" />
+  <meta name="keywords" content="HTML, CSS, D3" />
+  <meta name="author" content="Nguyễn Minh Đăng" />
+
+  <title>Task 2.1 D3 Data Binding</title>
+
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+</head>
+
+<body>
+  <h1>Creating and Formatting Paragraph Elements with D3</h1>
+
+  <script>
+    // Dataset to bind
+    const dataset = [14, 5, 26, 23, 9];
+
+    d3.select("body")
+      .selectAll("p")
+      .data(dataset)
+      .enter()
+      .append("p")
+      .text(function (dataPoint) {
+        if (dataPoint > 10) {
+          return `Warning: Joe watched ${dataPoint} cat videos today.`;
+        }
+        return `Joe watched ${dataPoint} cat videos today.`;
+      })
+      .style("color", function (dataPoint) {
+        return dataPoint > 10 ? "red" : "black";
+      });
+  </script>
+
+  <br /><br />
+  <footer style="color: grey">
+    COS30045 Data Visualisation<br />
+    Nguyễn Minh Đăng
+  </footer>
+</body>
+
+</html>

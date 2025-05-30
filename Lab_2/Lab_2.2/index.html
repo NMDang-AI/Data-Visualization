@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="description" content="Data Visualisation" />
+    <meta name="keywords" content="HTML, CSS, D3" />
+    <meta name="author" content="Nguyễn Minh Đăng" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Task 2.2 D3 Drawing with Data - Bar Chart</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <style>
+      body {
+        font-family: sans-serif;
+      }
+      .bar {
+        fill: steelblue;
+      }
+      .label {
+        font-size: 12px;
+        text-anchor: middle;
+        fill: black;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Creating and Formatting Paragraph Elements with D3</h1>
+
+    <script>
+      const svgWidth = 500;
+      const svgHeight = 120;
+      const barPadding = 1;
+
+      const dataset = [10,80,30,50,20,40,60,70,90,10];
+
+      const barWidth = svgWidth / dataset.length;
+
+      const svg = d3
+        .select("body")
+        .append("svg")
+        .attr("width", svgWidth)
+        .attr("height", svgHeight);
+
+      svg
+        .selectAll("rect")
+        .data(dataset)
+        .enter()
+        .append("rect")
+        .attr("class", "bar")
+        .attr("x", function (dataValue, index) {
+          return index * barWidth;
+        })
+        .attr("y", function (dataValue) {
+          return svgHeight - dataValue;
+        })
+        .attr("width", barWidth - barPadding)
+        .attr("height", function (dataValue) {
+          return dataValue;
+        });
+
+      svg
+        .selectAll("text")
+        .data(dataset)
+        .enter()
+        .append("text")
+        .attr("class", "label")
+        .text(function (dataValue) {
+          return dataValue;
+        })
+        .attr("x", function (dataValue, index) {
+          return index * barWidth + (barWidth - barPadding) / 2;
+        })
+        .attr("y", function (dataValue) {
+          return svgHeight - dataValue - 2;
+        });
+    </script>
+
+    <br /><br />
+    <footer style="color: grey">
+      COS30045 Data Visualisation<br />
+      Nguyễn Minh Đăng
+    </footer>
+  </body>
+</html>

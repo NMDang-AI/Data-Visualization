@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Drawing Shapes with SVG</title>
+</head>
+<body>
+
+  <h1>Drawing Shapes with SVG</h1>
+
+  <!-- SVG Canvas -->
+  <svg width="500" height="60" style="background-color:slategrey;">
+    <!-- Group tag to apply transformations to all shapes inside -->
+    <g transform="translate(20, 0)">
+      
+      <!-- A simple circle with a websafe color -->
+      <circle cx="25" cy="30" r="25" fill="cornflowerblue" />
+
+      <!-- A rectangle using rgb color system -->
+      <rect x="50" y="5" width="50" height="50" fill="rgb(100, 149, 237)" />
+
+      <!-- An ellipse using rgba with transparency -->
+      <ellipse cx="140" cy="30" rx="40" ry="25" fill="rgba(100, 149, 237, 0.5)" />
+
+      <!-- A line across the canvas -->
+      <line x1="0" y1="30" x2="180" y2="30" stroke="black" stroke-width="5" />
+      
+    </g>
+  </svg>
+
+  <br><br>
+
+  <!-- Footer Section -->
+  <footer style="color:grey">
+    COS30045 Data Visualisation<br>
+    Nguyễn Minh Đăng
+  </footer>
+
+</body>
+</html>

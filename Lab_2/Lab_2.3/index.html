@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="description" content="Data Visualisation" />
+    <meta name="keywords" content="HTML, CSS, D3" />
+    <meta name="author" content="Nguyễn Minh Đăng" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Task 2.3 D3 Drawing with Data - Scatter Plot</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <style>
+      body {
+        font-family: sans-serif;
+      }
+      .bar {
+        fill: steelblue;
+      }
+      .label {
+        font-size: 12px;
+        text-anchor: middle;
+        fill: black;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Drawing with Data - Scatter Plot</h1>
+
+    <script>
+      const svgWidth = 500;
+      const svgHeight = 100;
+      const barPadding = 1;
+
+      // Added third value to each data point to represent radius
+      const dataset = [
+        [5, 20, 8],
+        [40, 90, 5],
+        [250, 50, 10],
+        [100, 33, 7],
+        [30, 95, 2],
+        [410, 12, 9],
+        [45, 44, 11],
+        [25, 67, 3],
+        [85, 21, 6],
+        [220, 88, 14],
+      ];
+
+      const barWidth = svgWidth / dataset.length;
+
+      const svg = d3
+        .select("body")
+        .append("svg")
+        .attr("width", svgWidth)
+        .attr("height", svgHeight);
+
+      //Worked example from Murray
+      svg
+        .selectAll("circle")
+        .data(dataset)
+        .enter()
+        .append("circle")
+        .attr("cx", function (d) {
+          return d[0];
+        })
+        .attr("cy", function (d) {
+          return d[1];
+        })
+        // Using the third value as radius
+        .attr("r", function (d) {
+          return d[2];
+        })
+        .attr("fill", "slategrey");
+
+      svg
+        .selectAll("text")
+        .data(dataset)
+        .enter()
+        .append("text")
+        .text(function (d) {
+          return d[0] + ", " + d[1];
+        })
+        // Positioning text based on the circle's coordinates with slight offset
+        .attr("x", function (d) {
+          return d[0];
+        })
+        .attr("y", function (d) {
+          return d[1] - d[2] - 5; // Position above the circle
+        })
+        .attr("class", "label");
+    </script>
+
+    <br /><br />
+    <footer style="color: grey">
+      COS30045 Data Visualisation<br />
+      Nguyễn Minh Đăng
+    </footer>
+  </body>
+</html>

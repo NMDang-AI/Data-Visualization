@@ -1,0 +1,69 @@
+h1 {
+    text-align: center
+}
+
+h2 {
+    text-align: right;
+    margin-right: 2em
+}
+
+#name {
+    margin-right: 4em
+}
+
+#table {
+    text-align: center
+}
+
+h4 {
+    text-align: center
+}
+
+.image-container {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    margin: 0 4em;
+    width: calc(100% - 8em);
+}
+
+.image-pair {
+    width: 48%;
+    margin-bottom: 2em
+}
+
+.image-left,
+.image-right {
+    text-align: center;
+    margin: 0;
+    display: block
+}
+
+figure {
+    display: inline-block;
+    margin: 0;
+    text-align: center
+}
+
+figcaption {
+    text-align: center;
+    margin-top: 0.5em;
+    display: block;
+    width: 100%
+}
+
+.caption-left,
+.caption-right {
+    text-align: center
+}
+
+#left {
+    text-align: left;
+    display: inline;
+    margin-right: 36em
+}
+
+#right {
+    text-align: right;
+    display: inline
+}
