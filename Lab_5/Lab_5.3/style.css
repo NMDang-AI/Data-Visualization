@@ -1,0 +1,26 @@
+body {
+  font-family: 'Times New Roman', Times, serif;
+  margin: 40px;
+}
+
+#chart-container {
+  padding: 20px 0;
+}
+
+button {
+  padding: 4px 8px;
+  border: none;
+  cursor: pointer;
+  background-color: darkblue;
+  color: white;
+  transition: ease-in 0.3s;
+}
+
+button:hover {
+  background-color: slateblue;
+}
+
+footer {
+  margin-bottom: 40px;
+  color: gray;
+}

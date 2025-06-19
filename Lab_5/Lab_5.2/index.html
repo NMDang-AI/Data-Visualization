@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8"/>
+	<meta name="description"	content="Data Visualisation"/>
+	<meta name="keywords"		  content="HTML, CSS, D3"/>
+	<meta name="author"			  content="Nguyễn Minh Đăng"/>
+	<link rel="stylesheet" href="style.css">
+	<title>Task 5.2 D3 Transitions</title>
+	
+	<script src="https://d3js.org/d3.v7.min.js"></script>
+
+</head>
+<body>
+
+	<h1>Update and Transitions</h1>
+
+	<div>
+		<button id="update-btn">Update</button>
+		<button id="ease-circle-in">Transition 1</button>
+		<button id="ease-circle-out">Transition 2</button>
+		<button id="ease-elastic-out">Transition 3</button>
+	</div>
+	<div id="chart-container"></div>
+
+	<script>
+		var w = 500;
+		var h = 120;
+		var numValues = 20;
+		var maxValue = 25;
+
+		function generateRandomDataset() {
+			var data = [];
+			for (var i = 0; i < numValues; i++) {
+				var newNumber = Math.floor(Math.random() * maxValue);
+				data.push(newNumber);
+			}
+			return data;
+		}
+
+		// Animation settings
+		var currentEase = d3.easeCubicInOut;
+		var currentDuration = 1000;
+		var currentDelay = function(d, i) { return i * 50; } // 50ms stagger
+
+		function drawChart(dataset) {
+			// Remove previous chart
+			d3.select("#chart-container").selectAll("svg").remove();
+
+			var xScale = d3.scaleBand()
+				.domain(d3.range(dataset.length))
+				.rangeRound([0, w])
+				.paddingInner(0.05);
+
+			var yScale = d3.scaleLinear()
+				.domain([0, d3.max(dataset)])
+				.range([h, 0]);
+
+			var svg = d3.select("#chart-container")
+				.append("svg")
+				.attr("width", w)
+				.attr("height", h);
+
+			// Initial bars
+			svg.selectAll("rect")
+				.data(dataset)
+				.enter()
+				.append("rect")
+				.attr("x", function (d, i) { return xScale(i); })
+				.attr("y", h) // Start from bottom
+				.attr("width", xScale.bandwidth())
+				.attr("height", 0)
+				.attr("fill", function (d) { return "rgb(0, " + (d * 6) + " , " + (d * 30) + ")"; })
+				.transition()
+				.delay(currentDelay)
+				.duration(currentDuration)
+				.ease(currentEase)
+				.attr("y", function (d) { return yScale(d); })
+				.attr("height", function (d) { return h - yScale(d); });
+
+			svg.selectAll("text")
+				.data(dataset)
+				.enter()
+				.append("text")
+				.text(function (d) { return d; })
+				.attr("x", function (d, i) { return xScale(i) + xScale.bandwidth() / 2; })
+				.attr("y", h) // Start from bottom
+				.attr("font-family", "sans-serif")
+				.attr("font-size", "11px")
+				.attr("fill", function (d) {
+					var barHeight = h - yScale(d);
+					if (barHeight < 20) { return "black"; }
+					return "white";
+				})
+				.attr("text-anchor", "middle")
+				.transition()
+				.delay(currentDelay)
+				.duration(currentDuration)
+				.ease(currentEase)
+				.attr("y", function (d) {
+					var barHeight = h - yScale(d);
+					if (barHeight < 20) { return yScale(d) - 5; }
+					return yScale(d) + 15;
+				});
+		}
+
+		// Draw initial chart
+		var dataset = generateRandomDataset();
+		drawChart(dataset);
+
+		// Button events for different easings
+		d3.select("#update-btn")
+			.on("click", function() {
+				dataset = generateRandomDataset();
+				drawChart(dataset);
+			});
+
+		d3.select("#ease-circle-in")
+			.on("click", function() {
+				currentEase = d3.easeCircleIn;
+				currentDuration = 1000;
+				currentDelay = function(d, i) { return i * 100; };
+				drawChart(dataset);
+			});
+
+		d3.select("#ease-circle-out")
+			.on("click", function() {
+				currentEase = d3.easeCircleOut;
+				currentDuration = 1000;
+				currentDelay = function(d, i) { return i * 100; };
+				drawChart(dataset);
+			});
+
+		d3.select("#ease-elastic-out")
+			.on("click", function() {
+				currentEase = d3.easeElasticOut;
+				currentDuration = 1000;
+				currentDelay = function(d, i) { return i * 100; };
+				drawChart(dataset);
+			});
+	</script>
+	
+	<br>
+	<br>
+	<footer style="color:grey">COS30045 Data Visualisation<br>
+		Nguyễn Minh Đăng</footer>
+</body>
+</html>

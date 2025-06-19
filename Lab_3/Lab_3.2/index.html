@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8"/>
+	<meta name="description"	content="Data Visualisation"/>
+	<meta name="keywords"		  content="HTML, CSS, D3"/>
+	<meta name="author"			  content="Nguyễn Minh Đăng"/>
+
+	<title>Task 3.1 D3 Scaling your Charts</title>
+	
+	<script src="https://d3js.org/d3.v7.min.js"></script>
+
+</head>
+<body>
+
+	<h1>Drawing with Data - Scatter Plot</h1>
+	
+	<script>
+	var w = 600;
+	var h = 300;
+	var padding = 50;
+
+	var dataset = [
+		[5, 20],
+		[480, 90],
+		[250, 50, 5],
+		[100, 33, 5],
+		[330, 95, 5],
+		[410, 12],
+		[475, 44],
+		[25, 67],
+		[85, 21],
+		[220, 88]
+	];
+
+	var xScale = d3.scaleLinear()
+		.domain([d3.min(dataset, function(d) {
+			return d[0];
+		}), d3.max(dataset, function(d) {
+			return d[0];
+		})])
+		.range([padding, w - padding]);
+
+	var yScale = d3.scaleLinear()
+		.domain([d3.min(dataset, function(d) {
+			return d[1];
+		}), d3.max(dataset, function(d) {
+			return d[1];
+		})])
+		.range([h - padding, padding]);
+
+	var svg = d3.select("body")
+		.append("svg")
+		.attr("width", w)
+		.attr("height", h);
+
+	svg.selectAll("circle")
+		.data(dataset)
+		.enter()
+		.append("circle")
+		.attr("cx", function (d) {
+			return xScale(d[0]);
+		})
+		.attr("cy", function (d) {
+			return yScale(d[1]);
+		})
+		.attr("r", function (d) {
+			return d[2] || 2; // Default radius if not specified
+		})
+		.attr("fill", function(d, i) {
+			return (typeof d[2] != "undefined") ? "red" : "slategrey";
+		});
+
+	svg.selectAll("text")
+		.data(dataset)
+		.enter()
+		.append("text")
+		.text(function (d) {
+			return d[0] + "," + d[1];
+		})
+		.attr("x", function (d, i) {
+			return xScale(d[0]) + 5;	// Add a small offset for text visibility
+		})
+		.attr("y", function (d) {
+			var radius = (typeof d[2] !== "undefined") ? d[2] : 2; 	// If radius is not specified, use default value
+			// Adjust y position based on radius
+			return yScale(d[1]) - radius - 2;
+		})
+		.attr("font-family", "sans-serif")
+		.attr("font-size", "11px")
+		.attr("fill", function (d, i) {
+			return (typeof d[2] != "undefined") ? "red" : "black";	// Change color based on radius
+		})
+		.attr("text-anchor", "start");
+
+	var xAxis = d3.axisBottom()
+		.ticks(5)
+		.scale(xScale);
+	svg.append("g")
+		.attr("transform", "translate(0," + (h - padding) + ")")
+		.call(xAxis);
+
+	var yAxis = d3.axisLeft()
+		.ticks(5)
+		.scale(yScale);
+	svg.append("g")
+		.attr("transform", "translate(" + padding + ",0)")
+		.call(yAxis);
+	</script>
+	
+	<br>
+	<br>
+	<footer style="color:grey">COS30045 Data Visualisation<br>
+		Nguyễn Minh Đăng</footer>
+</body>
+</html>

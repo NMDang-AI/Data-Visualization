@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8"/>
+	<meta name="description"	content="Data Visualisation"/>
+	<meta name="keywords"		  content="HTML, CSS, D3"/>
+	<meta name="author"			  content="Nguyễn Minh Đăng"/>
+	<link rel="stylesheet" href="style.css">
+	<title>Task 5.1 D3 Updates</title>
+	
+	<script src="https://d3js.org/d3.v7.min.js"></script>
+
+</head>
+<body>
+
+	<h1>Update Data</h1>
+
+	<div>
+    	<button id="update-btn">Update Once</button>
+  	</div>
+	<div id="chart-container"></div>
+
+	<script>
+	var w = 500;
+	var h = 120;
+	var numValues = 20;
+	var maxValue = 25;
+
+	function generateRandomDataset() {
+		var data = [];
+		for (var i = 0; i < numValues; i++) {
+			var newNumber = Math.floor(Math.random() * maxValue);
+			data.push(newNumber);
+		}
+		return data;
+	}
+
+	function drawChart(dataset) {
+		// Remove previous chart
+		d3.select("#chart-container").selectAll("svg").remove();
+
+		var xScale = d3.scaleBand()
+			.domain(d3.range(dataset.length))
+			.rangeRound([0, w])
+			.paddingInner(0.05);
+
+		var yScale = d3.scaleLinear()
+			.domain([0, d3.max(dataset)])
+			.range([h, 0]);
+
+		var svg = d3.select("#chart-container")
+			.append("svg")
+			.attr("width", w)
+			.attr("height", h);
+
+		svg.selectAll("rect")
+			.data(dataset)
+			.enter()
+			.append("rect")
+			.attr("x", function (d, i) {
+				return xScale(i);
+			})
+			.attr("y", function (d) {
+				return yScale(d);
+			})
+			.attr("width", xScale.bandwidth())
+			.attr("height", function (d) {
+				return h - yScale(d);
+			})
+			.attr("fill", function (d) {
+				return "rgb(0, " + (d * 6) + " , " + (d * 30) + ")";
+			});
+
+		svg.selectAll("text")
+			.data(dataset)
+			.enter()
+			.append("text")
+			.text(function (d) {
+				return d;
+			})
+			.attr("x", function (d, i) {
+				return xScale(i) + xScale.bandwidth() / 2;
+			})
+			.attr("y", function (d) {
+				var barHeight = h - yScale(d);
+				if (barHeight < 20) {
+					return yScale(d) - 5;
+				}
+				return yScale(d) + 15;
+			})
+			.attr("font-family", "sans-serif")
+			.attr("font-size", "11px")
+			.attr("fill", function (d) {
+				var barHeight = h - yScale(d);
+				if (barHeight < 20) {
+					return "black";
+				}
+				return "white";
+			})
+			.attr("text-anchor", "middle");
+	}
+
+	// Draw initial chart
+	var dataset = generateRandomDataset();
+	drawChart(dataset);
+
+	// Button event
+	d3.select("#update-btn")
+		.on("click", function() {
+			dataset = generateRandomDataset();
+			drawChart(dataset);
+		});
+	</script>
+	
+	<br>
+	<br>
+	<footer style="color:grey">COS30045 Data Visualisation<br>
+		Nguyễn Minh Đăng</footer>
+</body>
+</html>
