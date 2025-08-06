@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>D3 Mouse Over Effects</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <style>
+        .bar {
+            fill: slategrey;
+            transition: all 0.3s;
+        }
+        .bar:hover {
+            fill: orange;
+        }
+        .tooltip {
+            position: absolute;
+            padding: 8px;
+            background: rgba(0, 0, 0, 0.8);
+            color: #fff;
+            border-radius: 4px;
+            pointer-events: none;
+            font: 12px sans-serif;
+        }
+    </style>
+</head>
+<body>
+    <button id="add">Add</button>
+    <button id="remove">Remove</button>
+    <div id="chart"></div>
+    <div class="tooltip" id="tooltip"></div>
+    
+    <script>
+        // Initial data
+        let dataset = [30, 10, 50, 20, 40];
+        const w = 500, h = 300;
+        
+        // Create SVG
+        const svg = d3.select("#chart")
+            .append("svg")
+            .attr("width", w)
+            .attr("height", h);
+            
+        // Set up scales
+        const xScale = d3.scaleBand()
+            .domain(d3.range(dataset.length))
+            .range([0, w])
+            .paddingInner(0.1);
+            
+        const yScale = d3.scaleLinear()
+            .domain([0, d3.max(dataset)])
+            .range([0, h - 20]);
+            
+        // Draw initial bars
+        updateChart();
+        
+        // Button event listeners
+        d3.select("#add").on("click", function() {
+            dataset.push(Math.round(Math.random() * 50));
+            updateChart();
+        });
+        
+        d3.select("#remove").on("click", function() {
+            dataset.pop();
+            updateChart();
+        });
+        
+        function updateChart() {
+            // Update xScale domain
+            xScale.domain(d3.range(dataset.length));
+            
+            // Select and update bars
+            const bars = svg.selectAll(".bar")
+                .data(dataset, d => d);
+                
+            // Remove old bars
+            bars.exit().remove();
+            
+            // Update existing bars
+            bars.attr("x", (d, i) => xScale(i))
+                .attr("y", d => h - yScale(d))
+                .attr("width", xScale.bandwidth())
+                .attr("height", d => yScale(d));
+                
+            // Add new bars with mouseover effects
+            bars.enter()
+                .append("rect")
+                .attr("class", "bar")
+                .attr("x", (d, i) => xScale(i))
+                .attr("y", d => h - yScale(d))
+                .attr("width", xScale.bandwidth())
+                .attr("height", d => yScale(d))
+                .on("mouseover", function(event, d) {
+                    // Highlight bar
+                    d3.select(this).attr("fill", "orange");
+                    
+                    // Show tooltip
+                    d3.select("#tooltip")
+                        .style("left", (event.pageX + 10) + "px")
+                        .style("top", (event.pageY - 20) + "px")
+                        .style("opacity", 1)
+                        .text(`Value: ${d}`);
+                })
+                .on("mouseout", function() {
+                    // Restore bar color
+                    d3.select(this).attr("fill", "slategrey");
+                    
+                    // Hide tooltip
+                    d3.select("#tooltip").style("opacity", 0);
+                });
+        }
+    </script>
+</body>
+</html>

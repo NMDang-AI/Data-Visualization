@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>D3 Line and Area Charts</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <style>
+        .line {
+            fill: none;
+            stroke: steelblue;
+            stroke-width: 2px;
+        }
+        .area {
+            fill: lightsteelblue;
+            stroke-width: 0;
+        }
+        .axis text {
+            font: 10px sans-serif;
+        }
+        .axis path, .axis line {
+            fill: none;
+            stroke: #000;
+            shape-rendering: crispEdges;
+        }
+    </style>
+</head>
+<body>
+    <div id="chart"></div>
+    
+    <script>
+        // Set up dimensions
+        const w = 600, h = 300;
+        const padding = 40;
+        
+        // Create SVG
+        const svg = d3.select("#chart")
+            .append("svg")
+            .attr("width", w)
+            .attr("height", h);
+        
+        // Sample unemployment data (1978-1980)
+        const data = [
+            {year: 1978, month: 1, number: 428800},
+            {year: 1978, month: 2, number: 424800},
+            {year: 1978, month: 3, number: 403400},
+            {year: 1978, month: 4, number: 398400},
+            {year: 1978, month: 5, number: 393500},
+            {year: 1978, month: 6, number: 380500},
+            {year: 1978, month: 7, number: 398300},
+            {year: 1978, month: 8, number: 387300},
+            {year: 1978, month: 9, number: 370400},
+            {year: 1978, month: 10, number: 372800},
+            {year: 1978, month: 11, number: 444600},
+            {year: 1979, month: 1, number: 435200},
+            {year: 1979, month: 2, number: 431500},
+            {year: 1979, month: 3, number: 410100},
+            {year: 1979, month: 4, number: 405100},
+            {year: 1979, month: 5, number: 400200},
+            {year: 1979, month: 6, number: 387200},
+            {year: 1979, month: 7, number: 405000},
+            {year: 1979, month: 8, number: 394000},
+            {year: 1979, month: 9, number: 377100},
+            {year: 1979, month: 10, number: 379500},
+            {year: 1979, month: 11, number: 451300},
+            {year: 1980, month: 1, number: 441900},
+            {year: 1980, month: 2, number: 438200},
+            {year: 1980, month: 3, number: 416800},
+            {year: 1980, month: 4, number: 411800},
+            {year: 1980, month: 5, number: 406900},
+            {year: 1980, month: 6, number: 393900},
+            {year: 1980, month: 7, number: 411700},
+            {year: 1980, month: 8, number: 400700},
+            {year: 1980, month: 9, number: 383800},
+            {year: 1980, month: 10, number: 386200},
+            {year: 1980, month: 11, number: 458000}
+        ];
+        
+        // Format dates
+        data.forEach(d => {
+            d.date = new Date(d.year, d.month - 1);
+            d.number = +d.number;
+        });
+        
+        // Set up scales
+        const xScale = d3.scaleTime()
+            .domain(d3.extent(data, d => d.date))
+            .range([padding, w - padding]);
+            
+        const yScale = d3.scaleLinear()
+            .domain([0, d3.max(data, d => d.number)])
+            .range([h - padding, padding]);
+            
+        // Create line generator
+        const line = d3.line()
+            .x(d => xScale(d.date))
+            .y(d => yScale(d.number));
+            
+        // Create area generator
+        const area = d3.area()
+            .x(d => xScale(d.date))
+            .y0(yScale(0))
+            .y1(d => yScale(d.number));
+            
+        // Add area to SVG
+        svg.append("path")
+            .datum(data)
+            .attr("class", "area")
+            .attr("d", area);
+            
+        // Add line to SVG
+        svg.append("path")
+            .datum(data)
+            .attr("class", "line")
+            .attr("d", line);
+            
+        // Add axes
+        const xAxis = d3.axisBottom(xScale);
+        const yAxis = d3.axisLeft(yScale);
+        
+        svg.append("g")
+            .attr("class", "axis")
+            .attr("transform", `translate(0, ${h - padding})`)
+            .call(xAxis);
+            
+        svg.append("g")
+            .attr("class", "axis")
+            .attr("transform", `translate(${padding}, 0)`)
+            .call(yAxis);
+    </script>
+</body>
+</html>
