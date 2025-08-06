@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>D3 Choropleth Map</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="https://unpkg.com/topojson@3"></script>
+    <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
+    <style>
+        path {
+            stroke: #fff;
+            stroke-width: 0.5px;
+        }
+        .tooltip {
+            position: absolute;
+            padding: 8px;
+            background: rgba(0, 0, 0, 0.8);
+            color: #fff;
+            border-radius: 4px;
+            pointer-events: none;
+            font: 12px sans-serif;
+        }
+    </style>
+</head>
+<body>
+    <div id="map"></div>
+    <div class="tooltip" id="tooltip"></div>
+    
+    <script>
+        const w = 800, h = 600;
+        
+        const svg = d3.select("#map")
+            .append("svg")
+            .attr("width", w)
+            .attr("height", h);
+            
+        // Set up projection - centered on US
+        const projection = d3.geoAlbersUsa()
+            .translate([w/2, h/2]);
+            
+        const path = d3.geoPath().projection(projection);
+        
+        // Set up color scale
+        const color = d3.scaleQuantize()
+            .range(d3.schemeBlues[7]);
+            
+        // Sample unemployment data by US state (mock data)
+        const unemploymentData = {
+            "AL": 9.0, "AK": 7.0, "AZ": 8.0, "AR": 8.0, "CA": 10.0,
+            "CO": 7.0, "CT": 8.0, "DE": 7.0, "FL": 9.0, "GA": 9.0,
+            "HI": 6.0, "ID": 7.0, "IL": 9.0, "IN": 8.0, "IA": 6.0,
+            "KS": 6.0, "KY": 8.0, "LA": 8.0, "ME": 7.0, "MD": 7.0,
+            "MA": 7.0, "MI": 9.0, "MN": 6.0, "MS": 10.0, "MO": 7.0,
+            "MT": 6.0, "NE": 4.0, "NV": 11.0, "NH": 5.0, "NJ": 8.0,
+            "NM": 7.0, "NY": 8.0, "NC": 9.0, "ND": 3.0, "OH": 8.0,
+            "OK": 6.0, "OR": 8.0, "PA": 7.0, "RI": 10.0, "SC": 9.0,
+            "SD": 4.0, "TN": 8.0, "TX": 7.0, "UT": 5.0, "VT": 5.0,
+            "VA": 6.0, "WA": 7.0, "WV": 8.0, "WI": 7.0, "WY": 5.0
+        };
+        
+        // Set color domain
+        color.domain([
+            d3.min(Object.values(unemploymentData)),
+            d3.max(Object.values(unemploymentData))
+        ]);
+        
+        // Load US states GeoJSON data from TopoJSON
+        d3.json("https://cdn.jsdelivr.net/npm/us-atlas@3/states-10m.json").then(function(us) {
+            // Convert TopoJSON to GeoJSON
+            const states = topojson.feature(us, us.objects.states);
+            
+            // Merge unemployment data with GeoJSON
+            states.features.forEach(feature => {
+                const stateId = feature.id;
+                feature.properties.unemployment = unemploymentData[stateId] || 0;
+            });
+            
+            // Draw choropleth
+            svg.selectAll("path")
+                .data(states.features)
+                .enter()
+                .append("path")
+                .attr("d", path)
+                .attr("fill", d => {
+                    if (d.properties.unemployment) {
+                        return color(d.properties.unemployment);
+                    }
+                    return "#ccc";
+                })
+                .on("mouseover", function(event, d) {
+                    d3.select("#tooltip")
+                        .style("left", (event.pageX + 10) + "px")
+                        .style("top", (event.pageY - 20) + "px")
+                        .style("opacity", 1)
+                        .html(`<strong>${d.properties.name}</strong><br>Unemployment: ${d.properties.unemployment || 'N/A'}%`);
+                })
+                .on("mouseout", function() {
+                    d3.select("#tooltip").style("opacity", 0);
+                });
+        });
+    </script>
+</body>
+</html>
